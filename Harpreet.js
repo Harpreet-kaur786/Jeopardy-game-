@@ -10,21 +10,21 @@ document.body.appendChild(main);
 
 //create image for logo
 const image = document.createElement('img')
-image.setAttribute('src', 'Assets/jeopardy.jfif')
+image.setAttribute('src', 'jeopardy.jfif')
 main.appendChild(image)
 image.setAttribute('height','200')
 image.setAttribute('width','30%')
 
 //designing the logo
 const image2 = document.createElement('img')
-image2.setAttribute('src','Assets/image.crdownload')
+image2.setAttribute('src','image.crdownload')
 main.appendChild(image2)
 image2.setAttribute('height','200')
 image2.setAttribute('width','40%')
 
 
 let image1 = document.createElement('img')
-image1.setAttribute('src', 'Assets/jeopardy.jfif')
+image1.setAttribute('src', 'jeopardy.jfif')
 main.appendChild(image1)
 image1.setAttribute('height','200')
 image1.setAttribute('width','30%')
