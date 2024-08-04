@@ -1,3 +1,5 @@
+
+
 // Create main container
 var main = document.createElement("div");
 main.id = "container";
@@ -8,28 +10,25 @@ main.style.backgroundColor = "blue";
 main.style.display = "flex";
 document.body.appendChild(main);
 
-//create image for logo
-const image = document.createElement('img')
-image.setAttribute('src', 'jeopardy.jfif')
-main.appendChild(image)
-image.setAttribute('height','200')
-image.setAttribute('width','30%')
+// Create image for logo
+const image = document.createElement('img');
+image.setAttribute('src', 'Assets/jeopardy.jfif');
+main.appendChild(image);
+image.setAttribute('height', '200');
+image.setAttribute('width', '30%');
 
-//designing the logo
-const image2 = document.createElement('img')
-image2.setAttribute('src','image.crdownload')
-main.appendChild(image2)
-image2.setAttribute('height','200')
-image2.setAttribute('width','40%')
+// Designing the logo
+const image2 = document.createElement('img');
+image2.setAttribute('src', 'Assets/image.crdownload');
+main.appendChild(image2);
+image2.setAttribute('height', '200');
+image2.setAttribute('width', '40%');
 
-
-let image1 = document.createElement('img')
-image1.setAttribute('src', 'jeopardy.jfif')
-main.appendChild(image1)
-image1.setAttribute('height','200')
-image1.setAttribute('width','30%')
-
-
+let image1 = document.createElement('img');
+image1.setAttribute('src', 'Assets/jeopardy.jfif');
+main.appendChild(image1);
+image1.setAttribute('height', '200');
+image1.setAttribute('width', '30%');
 
 // Create game container
 var game = document.createElement("div");
@@ -50,17 +49,17 @@ document.body.appendChild(game);
 let score = document.createElement("h3");
 score.innerHTML = "Score: 0"; // Initial score display
 score.className = "score";
-score.id="score"
+score.id = "score";
 score.style.color = "white";
 score.style.textAlign = "left";
 score.style.fontSize = "1.3rem";
 game.appendChild(score);
 
-// data handling initializers
+// Data handling initializers
 const url = 'data.json';
 let allData = [];
 let categories = new Set();
-let Index = new Set();
+let usedIndexes = new Set();
 let currentCategory = "";
 let score1 = 0;
 let QuestionIndex = null; // To store the index of the current question
@@ -112,10 +111,8 @@ function createCategoryButtons() {
             button.addEventListener('click', () => {
                 currentCategory = category;
                 fetchNewQuestion();
-                // main.style.display = "none";
                 game.style.display = "none";
                 container1.style.display = "block";
-                container1.style.backgroundImage="url ('image.crdownload')"
                 element.style.display = "flex";
                 element.style.justifyContent = "center";
                 input.style.display = "inline-block";
@@ -150,12 +147,12 @@ container1.appendChild(element);
 let input = document.createElement("input");
 input.style.display = "none";
 input.id = "input";
-input.style.borderRadius="10px"
+input.style.borderRadius = "10px";
 input.style.height = "40px";
 input.style.width = "300px";
 input.style.marginLeft = "35%";
 input.style.marginTop = "10%";
-input.style.fontSize="1rem"
+input.style.fontSize = "1rem";
 container1.appendChild(input);
 
 let response = document.createElement('button');
@@ -175,51 +172,54 @@ let answer = document.createElement('h2');
 answer.style.display = "none";
 answer.className = "answer";
 answer.style.textAlign = "center";
-answer.style.color="white"
+answer.style.color = "white";
 container1.appendChild(answer);
 
 let showing = document.createElement('h3');
 showing.style.display = "none";
 showing.className = "showing";
 showing.style.textAlign = "center";
-showing.style.color="white"
+showing.style.color = "white";
 container1.appendChild(showing);
 
 function fetchNewQuestion() {
-    if (Index.size === allData.length) {
-        Index.clear(); // Reset if all questions have been used
+    if (usedIndexes.size === allData.length) {
+        usedIndexes.clear(); // Reset if all questions have been used
     }
 
     let questionIndex;
+    let filteredQuestions = allData.filter(item => item.Category === currentCategory);
+    
     do {
-        questionIndex = Math.floor(Math.random() * allData.length);
-    } while (Index.has(questionIndex) || allData[questionIndex].Category !== currentCategory);
+        questionIndex = Math.floor(Math.random() * filteredQuestions.length);
+    } while (usedIndexes.has(questionIndex));
 
-    Index.add(questionIndex);
+    usedIndexes.add(questionIndex);
     QuestionIndex = questionIndex; // Store the index of the current question
-    displayQuestion(questionIndex);
+    displayQuestion(questionIndex, filteredQuestions);
 }
 
-function displayQuestion(questionIndex) {
-    const question = allData[questionIndex];
+function displayQuestion(questionIndex, filteredQuestions) {
+    const question = filteredQuestions[questionIndex];
     element.innerText = question.Question;
     element.style.paddingTop = "30px";
 }
+
 let questionValue = 0;
 
 // Function to update and display the score
-
 function updateScore(points) {
     score1 += points;
-
+    score.innerText = `Score:$ ${score1}`;
 }
 
 // Event listener for when the user submits an answer
 response.addEventListener('click', () => {
     if (QuestionIndex !== null) {
-        const questionData = allData[currentQuestionIndex];
-        questionValue = parseInt(allData[0].Value.replace('$', ''));
-        const correctAnswer = questionData.Answer.toLowerCase(); 
+        let filteredQuestions = allData.filter(item => item.Category === currentCategory);
+        const questionData = filteredQuestions[QuestionIndex];
+        questionValue = parseInt(questionData.Value.replace('$', ''));
+        const correctAnswer = questionData.Answer.toLowerCase();
         answer.style.display = "block";
 
         const userAnswer = document.getElementById('input').value.trim().toLowerCase();
@@ -228,32 +228,28 @@ response.addEventListener('click', () => {
             showing.innerText = "Please type your answer first in the input box.";
         } else {
             if (userAnswer === correctAnswer) {
-                alert("Correct!");
                 showing.innerText = `Correct! The answer is "${correctAnswer}".`;
                 answer.innerText = "Congratulations! The answer is correct.";
-                updateScore(questionValue);            
-                input.value = ""; 
+                updateScore(questionValue);
+                input.value = "";
             } else {
-                alert("Incorrect!");
                 showing.innerText = `Incorrect. The correct answer was "${correctAnswer}".`;
                 answer.innerText = "Please try again!";
             }
-          
         }
-    } 
     }
-);
+});
 
 let reset = document.createElement('button');
 reset.id = "reset";
 reset.style.display = "none";
 reset.innerHTML = "Reset Game";
 reset.style.marginLeft = "40%";
-reset.style.height="40px";
-reset.style.width="100px"
-reset.style.fontSize="1rem"
-reset.style.fontWeight="700"
-reset.style.backgroundColor="#FCC308"
+reset.style.height = "40px";
+reset.style.width = "100px";
+reset.style.fontSize = "1rem";
+reset.style.fontWeight = "700";
+reset.style.backgroundColor = "#FCC308";
 container1.appendChild(reset);
 
 reset.addEventListener('click', resetGame);
@@ -266,5 +262,5 @@ function resetGame() {
     input.style.display = "none";
     response.style.display = "none";
     container1.style.display = "none";
-    score.innerText= ` Score : $ ${score1}`;
+    score.innerText = `Score:$ ${score1}`;
 }
